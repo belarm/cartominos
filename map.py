@@ -39,7 +39,8 @@ moon_font = pygame.font.SysFont('monospace', 36)
 # --- Init sounds
 turn_sound = pygame.mixer.Sound('sound/turn.wav')
 place_sound = pygame.mixer.Sound('sound/place.wav')
-
+move_sound = pygame.mixer.Sound('sound/move.wav')
+error_sound = pygame.mixer.Sound('sound/error.wav')
 
 def generate_tile(tile_id = 0):
     good_tile = False
@@ -229,12 +230,16 @@ while placing_tile:
         if event.type == pygame.KEYDOWN:
             errormessage = ""
             if event.key == pygame.K_UP or event.key == pygame.K_w:
+                pygame.mixer.Sound.play(move_sound)
                 selected_row = (selected_row - TILE_SIZE) % GRID_HEIGHT
             elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                pygame.mixer.Sound.play(move_sound)
                 selected_row = (selected_row + TILE_SIZE) % GRID_HEIGHT
             elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                pygame.mixer.Sound.play(move_sound)
                 selected_col = (selected_col - TILE_SIZE) % GRID_WIDTH
             elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                pygame.mixer.Sound.play(move_sound)
                 selected_col = (selected_col + TILE_SIZE) % GRID_WIDTH
             elif event.key == pygame.K_e:
                 pygame.mixer.Sound.play(turn_sound)
@@ -250,11 +255,13 @@ while placing_tile:
                 current_colors = rotate_tile(current_colors)
             elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                 if can_place_tile(current_tile, current_colors, grid, selected_row, selected_col):
+                    pygame.mixer.Sound.play(place_sound)
                     for i in range(TILE_SIZE):
                         for j in range(TILE_SIZE):
                             grid[selected_row+i][selected_col+j] = (current_tile[i][j], current_colors[i][j])
                     current_tile, current_colors = generate_tile()
                 else:
+                    pygame.mixer.Sound.play(error_sound)
                     errormessage = "tile must match adjacent tiles"
     #update display
     screen.fill(BLACK)
